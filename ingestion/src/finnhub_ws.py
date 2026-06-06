@@ -2,12 +2,12 @@ import json
 import logging
 import time
 import threading
-from typing import Callable, List
+from typing import Callable
 
 import websocket
 
 from .config import Config
-from .models import Trade, SubscriptionStatus
+from .models import Trade
 
 logger = logging.getLogger(__name__)
 

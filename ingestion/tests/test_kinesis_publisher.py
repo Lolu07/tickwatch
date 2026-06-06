@@ -1,7 +1,5 @@
 import json
-import threading
-from unittest.mock import MagicMock, patch, call
-import pytest
+from unittest.mock import MagicMock, patch
 
 from src.config import Config
 from src.kinesis_publisher import KinesisPublisher

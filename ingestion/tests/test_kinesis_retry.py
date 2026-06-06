@@ -4,11 +4,10 @@ All boto3 calls are patched — no AWS credentials needed.
 """
 
 import json
-from unittest.mock import MagicMock, patch, call
-import pytest
+from unittest.mock import MagicMock, patch
 
 from src.config import Config
-from src.kinesis_publisher import KinesisPublisher, _RETRYABLE_ERROR_CODES
+from src.kinesis_publisher import KinesisPublisher
 from src.models import Trade
 
 
