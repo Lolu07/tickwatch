@@ -1,0 +1,4 @@
+-r anomaly_detector/requirements.txt
+pytest==8.2.2
+pytest-cov==5.0.0
+moto[dynamodb]==5.0.10

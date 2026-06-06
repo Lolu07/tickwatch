@@ -1,0 +1,31 @@
+# Secrets — never commit
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+venv/
+
+# JS / Node
+node_modules/
+dist/
+build/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+cdk.out/
+# Generated Lambda zip packages (recreated by terraform apply)
+*.zip
+
+# OS
+.DS_Store
