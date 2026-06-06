@@ -104,7 +104,7 @@ def explain_anomaly(record: AnomalyRecord) -> Optional[str]:
 
     try:
         resp = _client.messages.create(
-            model="claude-opus-4-8",
+            model="claude-sonnet-4-6",
             max_tokens=120,
             system=_SYSTEM,
             messages=[{"role": "user", "content": prompt}],
