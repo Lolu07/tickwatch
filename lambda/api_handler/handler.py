@@ -37,7 +37,10 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
-from .config import Config
+try:
+    from .config import Config          # package context (tests, local)
+except ImportError:
+    from config import Config           # Lambda flat-module context
 
 # ---------------------------------------------------------------------------
 # Module-level singletons — reused across warm invocations

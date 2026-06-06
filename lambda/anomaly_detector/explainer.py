@@ -27,7 +27,10 @@ import anthropic
 import boto3
 from botocore.exceptions import ClientError
 
-from .models import AnomalyRecord
+try:
+    from .models import AnomalyRecord
+except ImportError:
+    from models import AnomalyRecord
 
 logger = logging.getLogger(__name__)
 

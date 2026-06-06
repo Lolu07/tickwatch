@@ -37,11 +37,18 @@ import logging
 import time
 from typing import Dict, List, Tuple
 
-from .config import Config
-from .detector import BaseDetector, ZScoreDetector
-from .explainer import explain_anomaly, init_client
-from .models import AnomalyRecord, DetectionResult, TradeRecord, WindowState
-from .state_store import AnomalyStore, WindowStore
+try:
+    from .config import Config                                           # package context (tests, local)
+    from .detector import BaseDetector, ZScoreDetector
+    from .explainer import explain_anomaly, init_client
+    from .models import AnomalyRecord, DetectionResult, TradeRecord, WindowState
+    from .state_store import AnomalyStore, WindowStore
+except ImportError:
+    from config import Config                                            # Lambda flat-module context
+    from detector import BaseDetector, ZScoreDetector
+    from explainer import explain_anomaly, init_client
+    from models import AnomalyRecord, DetectionResult, TradeRecord, WindowState
+    from state_store import AnomalyStore, WindowStore
 
 # ---------------------------------------------------------------------------
 # Module-level singletons — initialised on cold start, reused on warm starts

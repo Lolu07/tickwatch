@@ -10,7 +10,10 @@ No other code changes are needed.
 import math
 from abc import ABC, abstractmethod
 
-from .models import DetectionResult
+try:
+    from .models import DetectionResult
+except ImportError:
+    from models import DetectionResult
 
 
 class BaseDetector(ABC):

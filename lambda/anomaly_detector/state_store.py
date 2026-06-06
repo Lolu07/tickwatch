@@ -28,8 +28,12 @@ from typing import Dict, List
 import boto3
 from botocore.exceptions import ClientError
 
-from .config import Config
-from .models import AnomalyRecord, WindowState
+try:
+    from .config import Config
+    from .models import AnomalyRecord, WindowState
+except ImportError:
+    from config import Config
+    from models import AnomalyRecord, WindowState
 
 logger = logging.getLogger(__name__)
 
