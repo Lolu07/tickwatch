@@ -1,17 +1,46 @@
 # ---------------------------------------------------------------------------
 # Lambda anomaly detector
 #
-# Deployment strategy: archive_file packages the lambda/ directory at apply
-# time. source_code_hash ensures Terraform re-deploys when code changes.
-# In a real CI/CD pipeline you'd upload a pre-built zip to S3 from CI and
-# reference it here — that decouples infrastructure changes from code changes.
+# Build strategy: a null_resource installs Python dependencies for the Lambda
+# target platform (Linux x86_64 / CPython 3.12) into a build directory before
+# archive_file packages everything into a zip. The null_resource re-runs when
+# requirements.txt or any source .py file changes, keeping the zip fresh.
+# In a CI/CD pipeline you'd do this in a build step and push the zip to S3.
 # ---------------------------------------------------------------------------
 
-data "archive_file" "lambda_package" {
-  type = "zip"
+locals {
+  anomaly_src   = "${path.root}/../../lambda/anomaly_detector"
+  anomaly_build = "${path.root}/../../build/anomaly_detector"
+}
 
-  # Package only the anomaly_detector source — not tests or dev deps
-  source_dir  = "${path.root}/../../lambda/anomaly_detector"
+resource "null_resource" "build_anomaly_detector" {
+  triggers = {
+    requirements = filemd5("${local.anomaly_src}/requirements.txt")
+    sources      = sha256(join("", [for f in sort(fileset(local.anomaly_src, "*.py")) : filemd5("${local.anomaly_src}/${f}")]))
+  }
+
+  provisioner "local-exec" {
+    command = <<-SH
+      set -e
+      rm -rf "${local.anomaly_build}"
+      mkdir -p "${local.anomaly_build}"
+      pip3 install -r "${local.anomaly_src}/requirements.txt" \
+        --platform manylinux2014_x86_64 \
+        --implementation cp \
+        --python-version 3.12 \
+        --only-binary=:all: \
+        -t "${local.anomaly_build}" \
+        --quiet
+      cp "${local.anomaly_src}"/*.py "${local.anomaly_build}/"
+    SH
+  }
+}
+
+data "archive_file" "lambda_package" {
+  depends_on = [null_resource.build_anomaly_detector]
+
+  type        = "zip"
+  source_dir  = local.anomaly_build
   output_path = "${path.module}/lambda_package.zip"
 
   excludes = ["__pycache__", "*.pyc", "*.pyo"]
